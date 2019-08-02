@@ -2,7 +2,7 @@
 Its masks selected champions like Gangplank<br>
 ![Masked Gankplank](https://github.com/tufanYavas/LoL-TFT-Champion-Masking/blob/master/images/maskedimg.png)
 
-It works well but is a little slow. Detects in one second. Because of using tesseract.
+It works fine but is a little slow. Detects in one second. Because of using tesseract.
 
 ### Installation For Windows
 - [Download](https://github.com/UB-Mannheim/tesseract/wiki) and install tesseract.
