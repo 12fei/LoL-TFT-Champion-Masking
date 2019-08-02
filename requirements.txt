@@ -1,0 +1,14 @@
+MouseInfo==0.0.4
+numpy==1.17.0
+opencv-python==4.1.0.25
+Pillow==6.1.0
+PyAutoGUI==0.9.47
+PyGetWindow==0.0.6
+PyMsgBox==1.0.7
+pyperclip==1.7.0
+PyQt5==5.13.0
+PyQt5-sip==4.19.18
+PyRect==0.1.4
+PyScreeze==0.1.22
+pytesseract==0.2.7
+PyTweening==1.0.3
