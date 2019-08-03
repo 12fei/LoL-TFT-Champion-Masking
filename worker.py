@@ -46,48 +46,64 @@ def crop(imgArray,box):
     """Crop image"""
     return imgArray[box[1]:box[3], box[0]:box[2]]
 
-old_image_arrays = [0,0,0,0,0]
-old_text = [0,0,0,0,0]
+def isbox1inbox2(box1,box2):
+    """box1 in box2?"""
+    if (box2[0] <= box1[0] and box1[2] <= box2[2]) and (box2[1] <= box1[1] and box1[3] <= box2[3]):
+        return True
+    
 def screenshot_to_text():
-    screenshotIm =  screenshot()
-    img = np.array(screenshotIm) 
+    ss = np.array(screenshot())
     
     #boxes of 5 champs
-    xi,yi,xs,ys = int(img.shape[1]*25/100),int(img.shape[0]*96/100),int(img.shape[1]*33/100),int(img.shape[0]*99/100)
-    xi2,yi2,xs2,ys2 = int(img.shape[1]*35/100),int(img.shape[0]*96/100),int(img.shape[1]*43/100),int(img.shape[0]*99/100)
-    xi3,yi3,xs3,ys3 = int(img.shape[1]*46/100),int(img.shape[0]*96/100),int(img.shape[1]*53/100),int(img.shape[0]*99/100)
-    xi4,yi4,xs4,ys4 = int(img.shape[1]*56/100),int(img.shape[0]*96/100),int(img.shape[1]*64/100),int(img.shape[0]*99/100)
-    xi5,yi5,xs5,ys5 = int(img.shape[1]*67/100),int(img.shape[0]*96/100),int(img.shape[1]*75/100),int(img.shape[0]*99/100)
+    xi,yi,xs,ys = int(ss.shape[1]*25/100),int(ss.shape[0]*96/100),int(ss.shape[1]*33/100),int(ss.shape[0]*99/100)
+    xi2,yi2,xs2,ys2 = int(ss.shape[1]*35/100),int(ss.shape[0]*96/100),int(ss.shape[1]*43/100),int(ss.shape[0]*99/100)
+    xi3,yi3,xs3,ys3 = int(ss.shape[1]*46/100),int(ss.shape[0]*96/100),int(ss.shape[1]*53/100),int(ss.shape[0]*99/100)
+    xi4,yi4,xs4,ys4 = int(ss.shape[1]*56/100),int(ss.shape[0]*96/100),int(ss.shape[1]*64/100),int(ss.shape[0]*99/100)
+    xi5,yi5,xs5,ys5 = int(ss.shape[1]*67/100),int(ss.shape[0]*96/100),int(ss.shape[1]*75/100),int(ss.shape[0]*99/100)
     
+    img = crop(ss,[xi,yi,xs5,ys5])
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    
+# =============================================================================
+#     cv2.imshow("",img)
+#     k = cv2.waitKey(1) & 0xFF
+#     if k == 27:
+#         return
+# =============================================================================
     boxes = [[xi,yi,xs,ys],
              [xi2,yi2,xs2,ys2],
              [xi3,yi3,xs3,ys3],
              [xi4,yi4,xs4,ys4],
              [xi5,yi5,xs5,ys5]]
     
-    texts = list()
     
-    for box in boxes:
-        image = crop(img,box)
-                
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    lower_red = np.array([60,117,62])
+    upper_red = np.array([213,228,218])
+    
+    mask = cv2.inRange(img, lower_red, upper_red)
+    res = cv2.bitwise_and(img, img, mask= mask)
+    
+    gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+    ret,thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
+    mask = cv2.inRange(thresh1, 0, 0)
+    text = pytesseract.image_to_boxes(mask,lang="tur")
+    textList = text.split("\n")
+    
+    texts = [["",boxes[0]],["",boxes[1]],["",boxes[2]],["",boxes[3]],["",boxes[4]]]
+    
+    if textList == ['']:
+        return None
+    for i in textList:
+        i = i.split()
+        box1 = [xi+int(i[1]),
+                ss.shape[0]-int(i[2]),
+                xi+int(i[3]),
+                ss.shape[0]-int(i[4])]
         
-        # If before box's image same with new image, append before image's text and skip other steps
-        if gray.tolist() == old_image_arrays[boxes.index(box)]:
-            texts.append([old_text[boxes.index(box)],box])
-            continue
-        else:
-            # Else, update old image array index by new array
-            old_image_arrays[boxes.index(box)] = gray.tolist()
-            
-        #Clear noisy and read text via pytesseract
-        ret,thresh = cv2.threshold(gray,127,255,1)
-        
-        text = pytesseract.image_to_string(thresh)
-        
-        texts.append([text,box])
-        old_text[boxes.index(box)] = text
-        
+        for boxIndex,box2 in enumerate(boxes):
+            if isbox1inbox2(box1,box2):
+                texts[boxIndex][0]+=i[0]
+    
     return texts
 
 class Worker(QThread):
@@ -106,6 +122,7 @@ class Worker(QThread):
         self.running = True
         while self.running:
             texts = screenshot_to_text()
+            if texts == None:continue
             maskChamps = list()
             for champFromText in texts:
                 for comp in self.selectedComps:
@@ -116,7 +133,6 @@ class Worker(QThread):
                         if champFromText[1] not in maskChamps:
                             maskChamps.append(champFromText[1])
                             print(champFromText[0],comps[comp][np.argmax(similarRates)])
-            
             self.active.emit(maskChamps)
             
     def stop(self):

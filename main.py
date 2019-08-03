@@ -46,7 +46,7 @@ class Controller:
         self.ui = MainWindow()
         self.ui.worker.active.connect(self.run)
         self.ui.setWindowFlags(Qt.WindowStaysOnTopHint) # Main Window always top on
-
+        
         self.ui.show()
         
     def run(self,maskChamps):
