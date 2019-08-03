@@ -38,8 +38,6 @@ from difflib import SequenceMatcher
 
 def similar(a, b):
     """Return similarity ratio of a and b"""
-    if (a=="Varus" and b=="Darius") | (a=="Darius" and b=="Varus"):
-        return 0
     return SequenceMatcher(None, a, b).ratio()
 
 def crop(imgArray,box):
@@ -129,7 +127,7 @@ class Worker(QThread):
                     #if read champ in selected comps emit maskChamps
                     similarRates = [similar(champ,champFromText[0]) for champ in comps[comp]]
                     maxRate = similarRates[np.argmax(similarRates)]
-                    if maxRate > .667:
+                    if maxRate > .801:
                         if champFromText[1] not in maskChamps:
                             maskChamps.append(champFromText[1])
                             print(champFromText[0],comps[comp][np.argmax(similarRates)])
