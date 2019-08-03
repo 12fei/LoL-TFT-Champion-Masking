@@ -86,7 +86,7 @@ def screenshot_to_text():
     gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
     ret,thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
     mask = cv2.inRange(thresh1, 0, 0)
-    text = pytesseract.image_to_boxes(mask,lang="tur")
+    text = pytesseract.image_to_boxes(mask)
     textList = text.split("\n")
     
     texts = [["",boxes[0]],["",boxes[1]],["",boxes[2]],["",boxes[3]],["",boxes[4]]]
