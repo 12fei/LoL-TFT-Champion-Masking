@@ -28,13 +28,13 @@ class MainWindow(QMainWindow):
             print("Invalid sorting type, automatically sorted.")
             sorting_type = []
             
-            if len(comps)//5 == 0:
+            rowsPerColumn = 5 # If invalid sorting type, set automaticly
+            if int(len(comps)/rowsPerColumn) == 0:
                 sorting_type.append(len(comps))
             
             else:
-                rowsPerColumn = 5 # If invalid sorting type, set automaticly
                 for _ in range(len(comps)//rowsPerColumn):
-                    sorting_type.append(len(comps)//rowsPerColumn)
+                    sorting_type.append(rowsPerColumn)
                 sorting_type.append(len(comps)%rowsPerColumn)
             
         
