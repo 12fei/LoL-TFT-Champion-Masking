@@ -13,7 +13,7 @@ comps = {"Assassin":["Kha'Zix","Pyke","Zed","Katarina","Evelynn","Rengar","Akali
          "Noble":["Fiora","Garen","Vayne","Lucian","Leona","Kayle"],
          "Sorcerer":["Kassadin","Ahri","Lulu","Veigar","Morgana","Aurelion Sol","Karthus","Twisted Fate"],
          "Yordle":["Tristana","Lulu","Poppy","Veigar","Kennen","Gnar"],
-         "Knight":["Draven","Garen","Mordekaiser","Poppy","Sejuani","Kayle"],
+         "Knight":["Darius","Garen","Mordekaiser","Poppy","Sejuani","Kayle"],
          
          "Brawler":["Warwick","Rek'Sai","Blitzcrank","Volibear","Cho'Gath"],
          "Imperial":["Darius","Katarina","Draven","Swain"],
